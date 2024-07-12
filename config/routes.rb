@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   mount API::Base => "/"
+  root "main#index"
   get "/admin" => "admin/login#new"
   post "/admin" => "admin/login#login"
   delete "/admin/logout" => "admin/login#logout"
