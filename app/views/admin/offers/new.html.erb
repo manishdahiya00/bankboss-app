@@ -1,0 +1,91 @@
+<div id="page-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12">
+        <h2 class="page-header">New Offer</h2>
+      </div>
+      <div class="col-lg-6">
+        <%= form_with(model: @offer, url: admin_offers_path) do |form| %>
+          <div class="form-group">
+            <%= form.label :offer_name %>
+            <%= form.text_field :offer_name, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :status %>
+            <%= form.select :status,options_for_select(["active","inactive"], @offer.status), {}, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :offer_type %>
+            <%= form.select :offer_type,options_for_select(["Credit Card","Debit Card","Mutual Fund","Saving Account"], @offer.offer_type), {}, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :offer_rate %>
+            <%= form.text_field :offer_rate, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :offer_time %>
+            <%= form.text_field :offer_time, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :yt_video_url %>
+            <%= form.text_field :yt_video_url, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :action_url %>
+            <%= form.text_field :action_url, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :description %>
+            <%= form.text_area :description, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :offer_terms %>
+            <%= form.text_area :offer_terms, class: 'form-control' %>
+          </div>
+          <div class="actions">
+            <%= form.submit 'Save', class: 'btn btn-primary' %>
+            <%= link_to 'Cancel', admin_offers_path, class: 'btn btn-default' %>
+          </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group">
+              <%= form.label :icon_small_img_url %>
+              <%= form.text_field :icon_small_img_url, class: 'form-control' %>
+            </div>
+            <div class="form-group">
+              <%= form.label :banner_big_img_url %>
+              <%= form.text_field :banner_big_img_url, class: 'form-control' %>
+            </div>
+          <div class="form-group">
+            <%= form.label :offer_tags %>
+            <%= form.text_field :offer_tags, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :fee_charge %>
+            <%= form.text_field :fee_charge, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :offer_amount %>
+            <%= form.text_field :offer_amount, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :priority %>
+            <%= form.select :priority, (1..30).to_a, { selected: @offer.priority }, { class: 'form-control' } %>
+          </div>
+          <div class="form-group">
+            <%= form.label :income_amount %>
+            <%= form.text_field :income_amount, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :short_text %>
+            <%= form.text_field :short_text, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :offer_docs %>
+            <%= form.text_area :offer_docs, class: 'form-control' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

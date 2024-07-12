@@ -1,0 +1,179 @@
+<div id="page-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      <p id="notice" style="color:orange;"><%= notice %></p>
+      <div class="col-lg-12 d-flex flex-row">
+        <h2 class="page-header" style="margin: 10px 0 15px !important;">User Details
+        </h2>
+      </div>
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Device Id</th>
+            <th>Device Type</th>
+            <th>Device Name</th>
+            <th>Social Type</th>
+            <th>Social Id</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @user.id %></td>
+            <td><%= @user.device_id %></td>
+            <td><%= @user.device_type %></td>
+            <td><%= @user.device_name %></td>
+            <td><%= @user.social_type %></td>
+            <td><%= @user.social_id %></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Social Name</th>
+            <th>Social Email</th>
+            <th>Social Image</th>
+            <th>Ad Id</th>
+            <th>Refer Code</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @user.social_name %></td>
+            <td><%= @user.social_email %></td>
+            <td><img style="width:20px;" src="<%=@user.try(:social_img_url)%>" onerror="this.onerror=null;this.src='https://cdn.pixabay.com/photo/2014/03/24/17/21/wrong-295503_640.png';" /></td>
+            <td><%= @user.advertising_id %></td>
+            <td><%= @user.refer_code %></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Version Name / Version Code</th>
+            <th>Utm Source</th>
+            <th>Utm Medium</th>
+            <th>Utm Term</th>
+            <th>Utm Content</th>
+            <th>Utm Campaign</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @user.version_name %> / <%= @user.version_code %></td>
+            <td><%= @user.utm_source %></td>
+            <td><%= @user.utm_medium %></td>
+            <td><%= @user.utm_term %></td>
+            <td><%= @user.utm_content %></td>
+            <td><%= @user.utm_campaign %></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Referal Url</th>
+            <th>Source Ip</th>
+            <th>Security Token</th>
+            <th>FCM Token</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @user.referrer_url %></td>
+            <td><%= @user.source_ip %></td>
+            <td><%= @user.security_token %></td>
+            <td><%= @user.fcm_token %></td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>App Opens</h3>
+      <% if @appOpens.any? %>
+        <table class="table table-responsive table-bordered">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Source IP</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @appOpens.each do |appOpen| %>
+              <tr>
+                <td><%= appOpen.id %></td>
+                <td><%= appOpen.source_ip %></td>
+                <td><%= appOpen.created_at.strftime("%d/%m/%y %I:%M %p") %></td>
+                <td><%= appOpen.updated_at.strftime("%d/%m/%y %I:%M %p") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <%= will_paginate @appOpens %>
+      <% else %>
+        <h3>No App Opens Found</h3>
+      <% end %>
+      <h3>Redeem Histories</h3>
+      <% if @transactions.any? %>
+        <table class="table table-responsive table-bordered">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>UPI ID</th>
+              <th>Amount</th>
+              <th>Created At</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @transactions.each do |transaction| %>
+              <tr>
+                <td><%= transaction.id %></td>
+                <td><%= transaction.upi_id %></td>
+                <td><%= transaction.amount %></td>
+                <td><%= transaction.created_at.strftime("%d/%m/%y %I:%M %p") %></td>
+                <td class="fs-5">
+                                  <% unless transaction.status == "COMPLETED" %>
+                                    <div class="btn btn-primary" data-toggle="modal" data-target="#exampleModal<%= transaction.id %>">Payout</div>
+                                    <div class="modal fade" id="exampleModal<%= transaction.id %>" tabindex="-1" aria-labelledby="exampleModalLabel<%= transaction.id %>" aria-hidden="true">
+                                      <div class="modal-dialog">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel<%= transaction.id %>">Payout</h1>
+                                          </div>
+                                          <div class="modal-body">
+                                            <%= form_with(model: @transaction, url: admin_payout_user_path(transaction), method: :post) do |f| %>
+                                                <%= f.hidden_field :id, value: transaction.id, class: "form-control" %>
+                                              <div class="mb-3">
+                                                <%= f.label :amount, class: "form-label" %>
+                                                <%= f.text_field :amount, class: "form-control", title: "Please enter the amount", required: true %>
+                                              </div>
+                                              <div class="mb-3">
+                                                <%= f.label :secret, class: "form-label" %>
+                                                <%= f.text_field :secret, class: "form-control", required: true %>
+                                              </div>
+                                              <%= submit_tag "Payout", class: "btn btn-primary" %>
+                                            <% end %>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  <% else %>
+                                    <p style="color:Green;">PAYOUT SUCCESSFULL !!</p>
+                                  <% end %>
+                                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <%= will_paginate @transactions %>
+      <% else %>
+        <h3>No Redeem Histories Found</h3>
+      <% end %>
+    </div>
+  </div>
+</div>

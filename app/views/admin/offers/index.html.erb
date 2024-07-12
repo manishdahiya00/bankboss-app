@@ -1,0 +1,58 @@
+<div id="page-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      <p id="notice" style="color:orange;"><%= notice %></p>
+      <div class="col-lg-12">
+        <h2 class="page-header" style="margin: 10px 0 15px !important;">Listing Offers</h2>
+      </div>
+      <div class="col-lg-12 text-right">
+        <%= link_to 'New Offer', new_admin_offer_path, class: 'btn btn-primary', style: 'margin-bottom: 10px;' %>
+      </div>
+      <% if @offers.present? %>
+        <table class="table table-responsive table-bordered">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Offer Image</th>
+              <th>Offer Name</th>
+              <th>Offer Amount</th>
+              <th>Offer Type</th>
+              <th>Income Amount</th>
+              <th>Status</th>
+              <th>Date Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @offers.each do |offer| %>
+              <tr>
+                <td><%= offer.id %></td>
+                <td><img style="width:20px;" src="<%=offer.try(:icon_small_img_url)%>" onerror="this.onerror=null;this.src='https://cdn.pixabay.com/photo/2014/03/24/17/21/wrong-295503_640.png';" /></td>
+                <td><%= offer.offer_name %></td>
+                <td><%= offer.offer_amount %></td>
+                <td><%= offer.offer_type %></td>
+                <td><%= offer.income_amount %> </td>
+                <td>
+                <% if offer.status == "active" %>
+                    <img style="width:20px;" src="https://cdn.pixabay.com/photo/2012/04/24/12/40/ticks-39830_960_720.png" />
+                <% else %>
+                    <img style="width:20px;" src="https://cdn.pixabay.com/photo/2014/03/24/17/21/wrong-295503_640.png" />
+                 <% end %>
+                </td>
+                <td><%= offer.created_at.strftime("%d/%m/%y %I:%M %p") %></td>
+                <td style="display:flex;gap:5px;">
+                    <%= link_to 'Show', admin_offer_path(offer),class: 'btn btn-primary btn-sm' %>
+                  <%= link_to 'Edit', edit_admin_offer_path(offer),class: 'btn btn-default btn-sm' %>
+                  <%= button_to 'Delete', admin_offer_path(offer),method: :delete,class: 'btn btn-danger btn-sm' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <%= will_paginate @offers %>
+      <% else %>
+        <h1 class="not-found">No Offers Found</h1>
+      <% end %>
+    </div>
+  </div>
+</div>

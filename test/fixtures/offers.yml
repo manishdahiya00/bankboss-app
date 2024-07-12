@@ -1,0 +1,41 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  offer_name: MyString
+  description: MyText
+  status: MyString
+  offer_type: MyString
+  offer_rate: MyString
+  offer_time: MyString
+  offer_tags: MyString
+  fee_charge: MyString
+  offer_amount: MyString
+  income_amount: MyString
+  short_text: MyString
+  priority: MyString
+  yt_video_url: MyString
+  icon_small_img_url: MyString
+  banner_big_img_url: MyString
+  action_url: MyString
+  offer_terms: MyText
+  offer_docs: MyText
+
+two:
+  offer_name: MyString
+  description: MyText
+  status: MyString
+  offer_type: MyString
+  offer_rate: MyString
+  offer_time: MyString
+  offer_tags: MyString
+  fee_charge: MyString
+  offer_amount: MyString
+  income_amount: MyString
+  short_text: MyString
+  priority: MyString
+  yt_video_url: MyString
+  icon_small_img_url: MyString
+  banner_big_img_url: MyString
+  action_url: MyString
+  offer_terms: MyText
+  offer_docs: MyText

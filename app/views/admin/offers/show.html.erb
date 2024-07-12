@@ -1,0 +1,89 @@
+<div id="page-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      <p id="notice" style="color:orange;"><%= notice %></p>
+      <div class="col-lg-12 d-flex flex-row">
+        <h2 class="page-header" style="margin: 10px 0 15px !important;">offer Details
+        </h2>
+      </div>
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Offer Name</th>
+            <th>Offer Type</th>
+            <th>Offer Rate</th>
+            <th>Offer Time</th>
+            <th>Offer Tags</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @offer.id %></td>
+            <td><%= @offer.offer_name %></td>
+            <td><%= @offer.offer_type %></td>
+            <td><%= @offer.offer_rate %></td>
+            <td><%= @offer.offer_time %></td>
+            <td><%= @offer.offer_tags %></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Fee Charge</th>
+            <th>Offer Amount</th>
+            <th>Income Amount</th>
+            <th>Priority</th>
+            <th>Yt Video Url</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @offer.fee_charge %></td>
+            <td><%= @offer.offer_amount %></td>
+            <td><%= @offer.income_amount %></td>
+            <td><%= @offer.priority %></td>
+            <td><%= @offer.yt_video_url %></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Icon Image</th>
+            <th>Banner Image</th>
+            <th>Action Url</th>
+            <th>Short Text</th>
+            <th>Description</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><img style="width:20px;" src="<%=@offer.try(:icon_small_img_url)%>" onerror="this.onerror=null;this.src='https://cdn.pixabay.com/photo/2014/03/24/17/21/wrong-295503_640.png';" /></td>
+            <td><img style="width:20px;" src="<%=@offer.try(:banner_big_img_url)%>" onerror="this.onerror=null;this.src='https://cdn.pixabay.com/photo/2014/03/24/17/21/wrong-295503_640.png';" /></td>
+            <td><%= @offer.action_url %></td>
+            <td><%= @offer.short_text %></td>
+            <td><%= @offer.description %></td>
+            <td><%= @offer.created_at %></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Offer Docs</th>
+            <th>Offer Terms</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @offer.offer_docs %></td>
+            <td><%= @offer.offer_terms %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  source_ip: MyString
+  user: one
+  version_name: MyString
+  version_code: MyString
+
+two:
+  source_ip: MyString
+  user: two
+  version_name: MyString
+  version_code: MyString
