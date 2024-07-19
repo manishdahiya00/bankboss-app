@@ -1,4 +1,4 @@
- module API
+module API
   module V1
     class Auth < Grape::API
       include API::V1::Defaults
@@ -56,7 +56,7 @@
               user = User.find_by(social_email: params[:socialEmail], social_id: params[:socialId])
               unless user.present?
                 source_ip = request.ip
-                user = User.create(device_id: params[:deviceId], device_type: params[:deviceType], device_name: params[:deviceName], social_type: params[:socialType], social_id: params[:socialId], social_email: params[:socialEmail], social_name: params[:socialName], social_img_url: params[:socialImgurl], advertising_id: params[:advertisingId], version_name: params[:versionName], version_code: params[:versionCode], utm_source: params[:utmSource], utm_term: params[:utmTerm], utm_medium: params[:utmMedium], utm_content: params[:utmContent], utm_campaign: params[:utmCampaign], referrer_url: params[:referalUrl], fcm_token: params[:fcmToken], source_ip: source_ip, security_token: SecureRandom.uuid,refer_code: SecureRandom.hex(6).upcase)
+                user = User.create(device_id: params[:deviceId], device_type: params[:deviceType], device_name: params[:deviceName], social_type: params[:socialType], social_id: params[:socialId], social_email: params[:socialEmail], social_name: params[:socialName], social_img_url: params[:socialImgurl], advertising_id: params[:advertisingId], version_name: params[:versionName], version_code: params[:versionCode], utm_source: params[:utmSource], utm_term: params[:utmTerm], utm_medium: params[:utmMedium], utm_content: params[:utmContent], utm_campaign: params[:utmCampaign], referrer_url: params[:referalUrl], fcm_token: params[:fcmToken], source_ip: source_ip, security_token: SecureRandom.uuid, refer_code: SecureRandom.hex(6).upcase)
                 { status: 200, message: MSG_SUCCESS, userId: user.id, securityToken: user.security_token }
               end
               user.update(device_id: params[:deviceId], device_type: params[:deviceType], device_name: params[:deviceName], social_type: params[:socialType], social_id: params[:socialId], social_email: params[:socialEmail], social_name: params[:socialName], social_img_url: params[:socialImgurl], advertising_id: params[:advertisingId], version_name: params[:versionName], version_code: params[:versionCode], utm_source: params[:utmSource], utm_term: params[:utmTerm], utm_medium: params[:utmMedium], utm_content: params[:utmContent], utm_campaign: params[:utmCampaign], referrer_url: params[:referalUrl], fcm_token: params[:fcmToken], source_ip: source_ip)
@@ -85,10 +85,13 @@
           begin
             source_ip = request.ip
             if params[:email] == "testingyash8@gmail.com" && params[:password] == "yash@123"
-              user = valid_user(params[:userId], params[:securityToken])
-              return { status: 500, message: INVALID_USER } unless user.present?
-              user = User.create(social_name: "Testing Yash", social_email: params[:email], security_token: "acc7106fe5009609", source_ip: source_ip, social_img_url: "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png")
-              { message: MSG_SUCCESS, status: 200, userId: new_user.id, securityToken: new_user.security_token }
+              user = User.find_by(social_email: params[:email])
+              if user.present?
+                { message: "Success", status: 200, userId: user.id, securityToken: user.security_token }
+              else
+                new_user = User.create(social_name: "Testing Yash", social_email: params[:email], security_token: "acc7106fe5009609", source_ip: source_ip, refer_code: SecureRandom.hex(6).upcase, social_img_url: "https://upload.wikimedia.org/wikipedia/commons/9/99/Sample_User_Icon.png")
+                { message: "Success", status: 200, userId: new_user.id, securityToken: new_user.security_token }
+              end
             else
               { status: 500, message: "Invalid Email Or Password" }
             end
@@ -113,7 +116,7 @@
             forceUpdate = false
             amounts = [2200, 5600, 8500, 4590, 1530, 7580, 4590, 4000, 1000, 5800]
             user.app_opens.create(source_ip: source_ip, version_name: params[:versionName], version_code: params[:versionCode])
-            { status: 200, message: MSG_SUCCESS, appUrl: "", creditAmount: amounts.sample.to_s, debitAmount: amounts.sample.to_s, currency: "$", forceUpdate: forceUpdate, loanAmount: amounts.sample.to_s, packageName: "com.bankboss.app", savingAmount: amounts.sample.to_s, userName: user.social_name, userEmail: user.social_email, notification: false }
+            { status: 200, message: MSG_SUCCESS, appUrl: "", creditAmount: amounts.sample.to_s, debitAmount: amounts.sample.to_s, currency: "$", forceUpdate: forceUpdate, loanAmount: amounts.sample.to_s, packageName: "com.bankboss.app", savingAmount: amounts.sample.to_s, userName: user.social_name, userEmail: user.social_email, notification: false, userBalance: user.wallet_balance }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-appOpen-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR }

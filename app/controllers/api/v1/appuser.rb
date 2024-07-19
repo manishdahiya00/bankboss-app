@@ -17,7 +17,7 @@ module API
 
             offer_types = {
               "Credit Card" => :creditList,
-              "Demat Account" => :dematList,
+              "Debit Card" => :dematList,
               "Saving Account" => :savingList,
               "Mutual Fund" => :mutualFunds,
             }
@@ -75,7 +75,7 @@ module API
             offers.each do |offer|
               trendingOffers << { id: offer.id, offerName: offer.offer_name, offerAmt: offer.offer_amount, description: offer.description, imgUrl: offer.icon_small_img_url, offerType: offer.offer_type }
             end
-            { status: 200, message: MSG_SUCCESS, trendingOffer: trendingOffers || [] }
+            { status: 200, message: MSG_SUCCESS, trendingOffer: trendingOffers || [], userBalance: user.wallet_balance }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-offerDetail-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR, error: e }
@@ -119,7 +119,7 @@ module API
             notificationsList = []
             notifications = Offer.active.limit(10)
             notifications.each do |notification|
-              notificationsList << {desc: notification.description,offerDate: notification.created_at.strftime("%d/%m/%y"),offerId: notification.id,offerImg: notification.icon_small_img_url,offerTime: notification.created_at.strftime("%I:%M %p"),title: notification.offer_name}
+              notificationsList << { desc: notification.description, offerDate: notification.created_at.strftime("%d/%m/%y"), offerId: notification.id, offerImg: notification.icon_small_img_url, offerTime: notification.created_at.strftime("%I:%M %p"), title: notification.offer_name }
             end
             { status: 200, message: MSG_SUCCESS, notifications: notificationsList }
           rescue Exception => e
@@ -140,7 +140,7 @@ module API
           begin
             user = valid_user(params[:userId], params[:securityToken])
             return { status: 500, message: INVALID_USER } unless user.present?
-            { status: 200, message: MSG_SUCCESS,  currency: "USD",inviteAmount: 10,inviteFbUrl: "http://example.com/invite-fb",inviteHeading: "Invite your friends",inviteImgurl: "http://example.com/invite-image.jpg",inviteText: ["Join us and earn rewards","Invite your friends and get $10 for each signup"],inviteTextUrl: "http://example.com/invite-text",referralCode: user.refer_code}
+            { status: 200, message: MSG_SUCCESS, currency: "USD", inviteAmount: 10, inviteFbUrl: "http://example.com/invite-fb", inviteHeading: "Share, Invite friends and get free cash. Get 5 BankBoss amount instant as your friend register on BankBoss App", inviteImgurl: "http://example.com/invite-image.jpg", inviteText: ["Join us and earn rewards", "Invite your friends and get $10 for each signup"], inviteTextUrl: "http://example.com/invite-text", referralCode: user.refer_code, userBalance: user.wallet_balance }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-appInvite-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR, error: e }
