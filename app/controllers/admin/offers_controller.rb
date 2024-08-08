@@ -13,6 +13,7 @@ class Admin::OffersController < Admin::AdminController
   def new
     @offer = Offer.new
   end
+
   def create
     @offer = Offer.new(offer_params)
     if @offer.save
@@ -47,6 +48,7 @@ class Admin::OffersController < Admin::AdminController
     params.require(:offer).permit(
       :offer_name, :description, :status, :offer_type, :offer_rate, :offer_time,
       :offer_tags, :fee_charge, :offer_amount, :income_amount, :short_text, :priority, :yt_video_url,
-      :icon_small_img_url, :banner_big_img_url, :action_url, :offer_docs, :offer_terms)
+      :icon_small_img_url, :banner_big_img_url, :action_url, :offer_docs, :offer_terms, :features, :fees_and_charges, :target_audience, :documents_required, :how_to_get_commission, :lead_tracking_time
+    )
   end
 end

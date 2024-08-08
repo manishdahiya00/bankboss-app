@@ -75,12 +75,34 @@
           <tr>
             <th>Offer Docs</th>
             <th>Offer Terms</th>
+            <th>Features</th>
+            <th>Fees And Charges</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><%= @offer.offer_docs %></td>
             <td><%= @offer.offer_terms %></td>
+            <td><%= @offer.features %></td>
+            <td><%= @offer.fees_and_charges %></td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Target Audience</th>
+            <th>Documents Required</th>
+            <th>How to Get Commission</th>
+            <th>Lead Tracking Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @offer.target_audience %></td>
+            <td><%= @offer.documents_required %></td>
+            <td><%= @offer.how_to_get_commission %></td>
+            <td><%= @offer.lead_tracking_time %></td>
           </tr>
         </tbody>
       </table>

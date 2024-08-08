@@ -1,0 +1,47 @@
+<!-- Page Content -->
+<div id="page-wrapper">
+  <div class="container-fluid">
+    <div class="row">
+      <p id="notice" style="color: orange;"><%= notice %></p>
+      <div class="col-lg-12">
+        <h2 class="page-header" style="margin: 10px 0 15px !important;">Showing Video</h2>
+      </div>
+      <!-- App Banner Details Table -->
+      <table class="table table-responsive table-bordered">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Video Url</th>
+            <th>Title</th>
+            <th>Subtitle</th>
+            <th>Status</th>
+            <th>Description</th>
+            <th>Created At</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><%= @video.id %></td>
+            <td><a href="<%= @video.video_url %>"><%= @video.video_url %></a></td>
+            <td><%= @video.title %></td>
+            <td><%= @video.subtitle %></td>
+            <td>
+              <% if @video.status == false %>
+                ❌
+              <% else %>
+                ✔️
+              <% end %>
+            </td>
+            <td><%= @video.description %></td>
+            <td><%= @video.created_at %></td>
+            <td class="app-banner-action" style="display: flex;gap:5px;">
+              <%= link_to 'Edit', edit_admin_video_path(@video), class: "btn btn-warning" %>
+              <%= button_to 'Delete', admin_video_path(@video), method: :delete, data: { confirm: 'Are you sure?' }, class: "btn btn-danger" %>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

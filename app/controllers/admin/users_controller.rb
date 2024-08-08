@@ -7,8 +7,9 @@ class Admin::UsersController < Admin::AdminController
   end
 
   def show
-      @user = User.find(params[:id])
-      @appOpens = @user.app_opens.paginate(page: params[:page], per_page: 10).order(created_at: :desc)
-      @transactions = @user.transaction_histories.paginate(page: params[:page], per_page: 10).order(created_at: :desc)
+    @user = User.find(params[:id])
+    @appOpens = @user.app_opens.paginate(page: params[:page], per_page: 10).order(created_at: :desc)
+    @transactions = @user.transaction_histories.paginate(page: params[:page], per_page: 10).order(created_at: :desc)
+    @kyc = KycDetail.find_by(user_id: @user.id)
   end
 end

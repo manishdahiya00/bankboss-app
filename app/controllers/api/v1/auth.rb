@@ -114,9 +114,8 @@ module API
             return { status: 500, message: INVALID_USER } unless user.present?
             source_ip = request.ip
             forceUpdate = false
-            amounts = [2200, 5600, 8500, 4590, 1530, 7580, 4590, 4000, 1000, 5800]
             user.app_opens.create(source_ip: source_ip, version_name: params[:versionName], version_code: params[:versionCode])
-            { status: 200, message: MSG_SUCCESS, appUrl: "", creditAmount: amounts.sample.to_s, debitAmount: amounts.sample.to_s, currency: "$", forceUpdate: forceUpdate, loanAmount: amounts.sample.to_s, packageName: "com.bankboss.app", savingAmount: amounts.sample.to_s, userName: user.social_name, userEmail: user.social_email, notification: false, userBalance: user.wallet_balance, userImg: user.social_img_url }
+            { status: 200, message: MSG_SUCCESS, appUrl: "", currency: "₹", forceUpdate: forceUpdate, userName: user.social_name, userEmail: user.social_email, userImg: user.social_img_url }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-appOpen-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR }

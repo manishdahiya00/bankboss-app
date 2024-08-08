@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_12_084441) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_07_094947) do
+  create_table "app_banners", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "title"
+    t.text "image_url"
+    t.string "action_url"
+    t.boolean "status", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "app_opens", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "source_ip"
     t.bigint "user_id", null: false
@@ -19,6 +28,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_12_084441) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_app_opens_on_user_id"
+  end
+
+  create_table "kyc_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "aadhar_number"
+    t.string "full_name"
+    t.string "address"
+    t.string "pan_number"
+    t.string "dob"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_kyc_details_on_user_id"
   end
 
   create_table "offers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -42,6 +63,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_12_084441) do
     t.text "offer_docs"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "features"
+    t.text "fees_and_charges"
+    t.text "target_audience"
+    t.text "documents_required"
+    t.text "how_to_get_commission"
+    t.text "lead_tracking_time"
   end
 
   create_table "payouts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -92,8 +119,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_12_084441) do
     t.string "wallet_balance", default: "0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "mobile_number"
+    t.string "pincode"
+    t.string "gender"
+  end
+
+  create_table "videos", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "video_url"
+    t.string "title"
+    t.string "subtitle"
+    t.text "description"
+    t.boolean "status", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "app_opens", "users"
+  add_foreign_key "kyc_details", "users"
   add_foreign_key "transaction_histories", "users"
 end

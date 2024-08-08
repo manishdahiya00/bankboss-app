@@ -14,19 +14,14 @@ module API
           begin
             user = valid_user(params[:userId], params[:securityToken])
             return { status: 500, message: INVALID_USER } unless user.present?
-            pendingTransactions = []
-            completedTransactions = []
+            transactions = []
             pendingTransaction = user.transaction_histories.where(status: "PENDING")
             completedTransaction = user.transaction_histories.where(status: "COMPLETED")
             total_earning = completedTransaction.map { |t| t.amount.to_f }.sum
-            total_pending = pendingTransaction.map { |t| t.amount.to_f }.sum
-            pendingTransaction.each do |transaction|
-              pendingTransactions << { amount: transaction.amount.to_s, timaAt: transaction.created_at.strftime("%d/%m/%y %I:%M %p"), title: transaction.title || "", transactionId: transaction.id }
+            user.transaction_histories.order(created_at: :desc).limit(30).each do |transaction|
+              transactions << { amount: transaction.amount.to_s, timeAt: transaction.created_at.strftime("%d/%m/%y %I:%M %p"), title: transaction.title || "" }
             end
-            completedTransaction.each do |transaction|
-              completedTransactions << { amount: transaction.amount.to_s, timaAt: transaction.created_at.strftime("%d/%m/%y %I:%M %p"), title: transaction.title || "", transactionId: transaction.id }
-            end
-            { status: 200, message: MSG_SUCCESS, totalEarning: total_earning.to_s, totalPending: total_pending.to_s, pendingTransaction: pendingTransactions || [], completedTransaction: completedTransactions || [], userBalance: user.wallet_balance }
+            { status: 200, message: MSG_SUCCESS, totalEarning: total_earning.to_s, transactions: transactions || [], userBalance: user.wallet_balance, conversion: (user.wallet_balance.to_f / 100).to_s }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-transactionList-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR, error: e }

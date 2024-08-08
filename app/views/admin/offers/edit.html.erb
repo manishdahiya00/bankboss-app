@@ -42,20 +42,32 @@
             <%= form.label :offer_terms %>
             <%= form.text_area :offer_terms, class: 'form-control' %>
           </div>
+          <div class="form-group">
+            <%= form.label :features %>
+            <%= form.text_area :features, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :fees_and_charges %>
+            <%= form.text_area :fees_and_charges, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :how_to_get_commission %>
+            <%= form.text_area :how_to_get_commission, class: 'form-control' %>
+          </div>
           <div class="actions">
             <%= form.submit 'Save', class: 'btn btn-primary' %>
             <%= link_to 'Cancel', admin_offers_path, class: 'btn btn-default' %>
           </div>
         </div>
         <div class="col-lg-6">
-            <div class="form-group">
-              <%= form.label :icon_small_img_url %>
-              <%= form.text_field :icon_small_img_url, class: 'form-control' %>
-            </div>
-            <div class="form-group">
-              <%= form.label :banner_big_img_url %>
-              <%= form.text_field :banner_big_img_url, class: 'form-control' %>
-            </div>
+          <div class="form-group">
+            <%= form.label :icon_small_img_url %>
+            <%= form.text_field :icon_small_img_url, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :banner_big_img_url %>
+            <%= form.text_field :banner_big_img_url, class: 'form-control' %>
+          </div>
           <div class="form-group">
             <%= form.label :offer_tags %>
             <%= form.text_field :offer_tags, class: 'form-control' %>
@@ -83,6 +95,18 @@
           <div class="form-group">
             <%= form.label :offer_docs %>
             <%= form.text_area :offer_docs, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :target_audience %>
+            <%= form.text_area :target_audience, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :documents_required %>
+            <%= form.text_area :documents_required, class: 'form-control' %>
+          </div>
+          <div class="form-group">
+            <%= form.label :lead_tracking_time %>
+            <%= form.text_area :lead_tracking_time, class: 'form-control' %>
           </div>
         <% end %>
       </div>
