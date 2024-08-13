@@ -154,7 +154,7 @@ module API
             return { status: 500, message: INVALID_USER } unless user.present?
             offer = Offer.active.find_by(id: params[:offerId])
             return { status: 500, message: "Offer Not Found" } unless offer.present?
-            { status: 200, message: MSG_SUCCESS, actionType: "redirect", actionUrl: offer.action_url }
+            { status: 200, message: MSG_SUCCESS, actionType: "redirect", actionUrl: "http://192.168.1.30:3000/leads?t=refer&o=offer" }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-offerClicked-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR, error: e }
@@ -234,6 +234,46 @@ module API
             end
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-profile-#{params.inspect}-Error-#{e}"
+            { status: 500, message: MSG_ERROR, error: e }
+          end
+        end
+      end
+
+      resource :leads do
+        before { api_params }
+
+        params do
+          use :common_params
+        end
+
+        post do
+          begin
+            user = valid_user(params[:userId], params[:securityToken])
+            return { status: 500, message: INVALID_USER } unless user.present?
+            successLeads = []
+            processingLeads = []
+            rejectedLeads = []
+            user.leads.success.each do |lead|
+              offer = Offer.find_by(id: lead.offer_id)
+              successLeads << {
+                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "http://192.168.1.30/leads?t=#{user.refer_code}&o=#{offer.id}",
+              }
+            end
+            user.leads.processing.each do |lead|
+              offer = Offer.find_by(id: lead.offer_id)
+              processingLeads << {
+                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "http://192.168.1.30/leads?t=#{user.refer_code}&o=#{offer.id}",
+              }
+            end
+            user.leads.rejected.each do |lead|
+              offer = Offer.find_by(id: lead.offer_id)
+              rejectedLeads << {
+                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "http://192.168.1.30/leads?t=#{user.refer_code}&o=#{offer.id}",
+              }
+            end
+            { status: 200, message: MSG_SUCCESS, totalLeadsCount: user.leads.count, successLeadsCount: user.leads.success.count, progressLeadsCount: user.leads.processing.count, rejectedLeadsCount: user.leads.rejected.count, successLeads: successLeads || [], processingLeads: processingLeads || [], rejectedLeads: rejectedLeads || [] }
+          rescue Exception => e
+            Rails.logger.info "API Exception-#{Time.now}-leads-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR, error: e }
           end
         end

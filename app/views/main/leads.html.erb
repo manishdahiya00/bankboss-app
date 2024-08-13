@@ -1,0 +1,48 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <h2 class="navbar-logo"><%= @user.social_name %></h2>
+  </div>
+</nav>
+<div class="full-width-container">
+  <div class="content-container">
+    <div class="left-panel">
+      <div class="rates">
+        <div class="rate">
+          <img src="<%= @offer.banner_big_img_url %>" alt="Banking Product" class="w-full h-auto"/>
+        </div>
+      </div>
+      <h3 style="margin-bottom:20px;color:red;"><%= alert %></p>
+      <%= form_with(model: Lead, local: true, class: "account-form", data: { turbo: false }) do |form| %>
+        <%= form.hidden_field :user_id, value: @user.id, placeholder: "PAN", required: true %>
+        <%= form.hidden_field :offer_id, value: @offer.id, placeholder: "PAN", required: true %>
+        <div class="form-group">
+          <%= form.text_field :pan_number, placeholder: "PAN", required: true %>
+          <%= form.text_field :mobile_number, placeholder: "Mobile as per Aadhaar", required: true %>
+        </div>
+        <div class="form-group">
+          <%= form.text_field :full_name, placeholder: "Full Name", required: true %>
+          <%= form.email_field :email_address, placeholder: "Email", required: true %>
+        </div>
+        <div class="form-group">
+          <%= form.text_field :pincode, placeholder: "Pincode", required: true %>
+        </div>
+        <div>
+          <%= form.submit "SUBMIT", class: "btn" %>
+        </div>
+      <% end %>
+    </div>
+    <div class="right-panel">
+      <h2 style="margin-bottom:2rem;">Benefits</h2>
+      <h3>Features</h3>
+      <div class="benefits">
+        <div class="benefits-list">
+          <%= raw @offer.features.gsub("\n", "<br>").html_safe %>
+        </div>
+      </div>
+      <h3>Fees and charges</h3>
+      <div class="benefits">
+        <%= raw @offer.fees_and_charges.gsub("\n", "<br>").html_safe %>
+      </div>
+    </div>
+  </div>
+</div>

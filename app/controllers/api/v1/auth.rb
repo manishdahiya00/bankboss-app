@@ -115,7 +115,7 @@ module API
             source_ip = request.ip
             forceUpdate = false
             user.app_opens.create(source_ip: source_ip, version_name: params[:versionName], version_code: params[:versionCode])
-            { status: 200, message: MSG_SUCCESS, appUrl: "", currency: "₹", forceUpdate: forceUpdate, userName: user.social_name, userEmail: user.social_email, userImg: user.social_img_url }
+            { status: 200, message: MSG_SUCCESS, appUrl: "", currency: "₹", forceUpdate: forceUpdate, userName: user.social_name, userEmail: user.social_email, userImg: user.social_img_url, refer_code: user.refer_code }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-appOpen-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR }

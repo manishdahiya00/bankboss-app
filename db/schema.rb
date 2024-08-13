@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_07_094947) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_13_090704) do
   create_table "app_banners", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title"
     t.text "image_url"
@@ -31,7 +31,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_07_094947) do
   end
 
   create_table "kyc_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.string "user_id"
     t.string "aadhar_number"
     t.string "full_name"
     t.string "address"
@@ -39,7 +39,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_07_094947) do
     t.string "dob"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_kyc_details_on_user_id"
+  end
+
+  create_table "leads", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "pan_number"
+    t.string "mobile_number"
+    t.string "full_name"
+    t.string "email_address"
+    t.string "pincode"
+    t.string "offer_id"
+    t.string "user_id"
+    t.string "status", default: "PROCESSING"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "offers", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -135,6 +147,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_07_094947) do
   end
 
   add_foreign_key "app_opens", "users"
-  add_foreign_key "kyc_details", "users"
   add_foreign_key "transaction_histories", "users"
 end
