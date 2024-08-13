@@ -154,7 +154,7 @@ module API
             return { status: 500, message: INVALID_USER } unless user.present?
             offer = Offer.active.find_by(id: params[:offerId])
             return { status: 500, message: "Offer Not Found" } unless offer.present?
-            { status: 200, message: MSG_SUCCESS, actionType: "redirect", actionUrl: "http://192.168.1.30:3000/leads?t=refer&o=offer" }
+            { status: 200, message: MSG_SUCCESS, actionType: "redirect", actionUrl: "https://bankboss.app/leads?t=refer&o=offer" }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-offerClicked-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR, error: e }
@@ -197,7 +197,7 @@ module API
           begin
             user = valid_user(params[:userId], params[:securityToken])
             return { status: 500, message: INVALID_USER } unless user.present?
-            { status: 200, message: MSG_SUCCESS, currency: "USD", inviteAmount: 10, inviteFbUrl: "http://example.com/invite-fb", inviteHeading: "Share, Invite friends and get free cash. Get 5 BankBoss amount instant as your friend register on BankBoss App", inviteImgurl: "http://example.com/invite-image.jpg", inviteText: ["Join us and earn rewards", "Invite your friends and get $10 for each signup"], inviteTextUrl: "http://example.com/invite-text", referralCode: user.refer_code, userBalance: user.wallet_balance }
+            { status: 200, message: MSG_SUCCESS, currency: "USD", inviteAmount: 10, inviteFbUrl: "https://bankboss.app/invite", inviteHeading: "Share, Invite friends and get free cash. Get 5 BankBoss amount instant as your friend register on BankBoss App", inviteImgurl: "http://example.com/invite-image.jpg", inviteText: ["Join us and earn rewards", "Invite your friends and get $10 for each signup"], inviteTextUrl: "https://bankboss.app/invite", referralCode: user.refer_code, userBalance: user.wallet_balance }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-appInvite-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR, error: e }
@@ -256,19 +256,19 @@ module API
             user.leads.success.each do |lead|
               offer = Offer.find_by(id: lead.offer_id)
               successLeads << {
-                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "http://192.168.1.30/leads?t=#{user.refer_code}&o=#{offer.id}",
+                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}",
               }
             end
             user.leads.processing.each do |lead|
               offer = Offer.find_by(id: lead.offer_id)
               processingLeads << {
-                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "http://192.168.1.30/leads?t=#{user.refer_code}&o=#{offer.id}",
+                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}",
               }
             end
             user.leads.rejected.each do |lead|
               offer = Offer.find_by(id: lead.offer_id)
               rejectedLeads << {
-                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "http://192.168.1.30/leads?t=#{user.refer_code}&o=#{offer.id}",
+                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}",
               }
             end
             { status: 200, message: MSG_SUCCESS, totalLeadsCount: user.leads.count, successLeadsCount: user.leads.success.count, progressLeadsCount: user.leads.processing.count, rejectedLeadsCount: user.leads.rejected.count, successLeads: successLeads || [], processingLeads: processingLeads || [], rejectedLeads: rejectedLeads || [] }
