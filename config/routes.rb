@@ -10,7 +10,9 @@ Rails.application.routes.draw do
   delete "/admin/logout" => "admin/login#logout"
   get "/admin/dashboard" => "admin/dashboard#index"
   namespace :admin do
-    resources :users
+    resources :users do
+      put "/lead" => "users#lead"
+    end
     resources :offers
     resources :payouts
     resources :videos
