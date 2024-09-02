@@ -19,4 +19,6 @@ Rails.application.routes.draw do
     resources :app_banners
     post "/payout_user/:id", to: "admin#payout", as: "payout_user"
   end
+  get "/acdelete" => "acdelete#new"
+  post "/acdelete" => "acdelete#create"
 end

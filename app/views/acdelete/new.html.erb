@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Trendy News: Delete Account</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      .card {
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      }
+      .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+      }
+      .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+      }
+      .alert {
+        font-size: 1.1rem;
+      }
+    </style>
+  </head>
+  <body class="d-flex justify-content-center align-items-center vh-100">
+    <div class="container text-center">
+      <h1 class="mb-4">Delete Your Account</h1>
+      <% if flash[:alert] %>
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+          <%= flash[:alert] %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% end %>
+      <div class="card p-5 mx-auto" style="max-width: 500px;">
+        <h3 class="card-title mb-4">Confirm Account Deletion</h3>
+        <p class="card-text mb-4">
+          We're sorry to see you go. Please enter your email address below to confirm your request for account deletion. If your account already has a pending deletion request, you will be notified.
+        </p>
+        <%= form_with model: @deleted_user, url: acdelete_path, method: :post, class: "form" do |form| %>
+          <div class="mb-3">
+            <%= form.label :email, "Email Address", class: "form-label" %>
+            <%= form.email_field :email, class: "form-control", id: "emailInput", aria: { describedby: "emailHelp" }, required: true %>
+            <div id="emailHelp" class="form-text">
+              We will use this email address to identify your account.
+            </div>
+          </div>
+          <div class="d-grid gap-2">
+            <%= form.submit "Submit Request", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
