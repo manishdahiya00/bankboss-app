@@ -52,30 +52,31 @@ module API
             return { status: 500, message: INVALID_USER } unless user.present?
             data = []
             offer_types = [
-              "Bank Account",
               "Credit Card",
-              "Credit Line",
-              "Business Loan",
-              "Home Loan",
+              "Bank Account",
               "Demat Account",
-              "Personal Loan",
+              "Credit Line",
               "Mutual Fund",
+              "Personal Loan",
+              "Business Loan",
               "ITR",
+              "Home Loan",
             ]
 
             if params[:listCode].to_i.between?(0, offer_types.length - 1)
               offers = Offer.active.where(offer_type: offer_types[params[:listCode].to_i])
+              offers.each do |offer|
+                data << {
+                  id: offer.id,
+                  tag: offer_types[params[:listCode].to_i],
+                  offerName: offer.offer_name,
+                  offerAmt: offer.offer_amount,
+                  imgUrl: offer.icon_small_img_url,
+                  description: offer.description,
+                }
+              end
             end
 
-            offers.each do |offer|
-              data << {
-                id: offer.id,
-                offerName: offer.offer_name,
-                offerAmt: offer.offer_amount,
-                imgUrl: offer.icon_small_img_url,
-                description: offer.description,
-              }
-            end
             { status: 200, message: MSG_SUCCESS, data: data || [] }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-offerList-#{params.inspect}-Error-#{e}"
@@ -168,7 +169,7 @@ module API
             return { status: 500, message: INVALID_USER } unless user.present?
             offer = Offer.active.find_by(id: params[:offerId])
             return { status: 500, message: "Offer Not Found" } unless offer.present?
-            { status: 200, message: MSG_SUCCESS, actionType: "redirect", shareUrl: "Your #{offer.offer_name} is ready in minutes!\n✔️Get Account Number of Your Choice.\n✔️Up to 6.75% Rate of Interest on Savings Account\n.✔️Earn up to 7.75% interest p.a. with #{offer.offer_name}\n✔️Easy WhatsApp Banking Services.\n✔️Get Discounts on Food, Cab and Bills.\n\nApply now: https://bankboss.app/leads?t=refer&o=offer", image: offer.icon_small_img_url }
+            { status: 200, message: MSG_SUCCESS, actionType: "redirect", shareUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}", content: "Your #{offer.offer_name} is ready in minutes!\n✔️Get Account Number of Your Choice.\n✔️Up to 6.75% Rate of Interest on Savings Account\n.✔️Earn up to 7.75% interest p.a. with #{offer.offer_name}\n✔️Easy WhatsApp Banking Services.\n✔️Get Discounts on Food, Cab and Bills.\n\nApply now: ", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRllt133YN3tniF_D3kOCexKFhuyY9RKLAlAQ&s" }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-offerClicked-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR, error: e }
@@ -267,22 +268,25 @@ module API
             successLeads = []
             processingLeads = []
             rejectedLeads = []
+            puts user.leads.success
+            puts user.leads.processing
+            puts user.leads.rejected
             user.leads.success.each do |lead|
               offer = Offer.find_by(id: lead.offer_id)
               successLeads << {
-                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}",
+                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, shareUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}", content: "Your #{offer.offer_name} is ready in minutes!\n✔️Get Account Number of Your Choice.\n✔️Up to 6.75% Rate of Interest on Savings Account\n.✔️Earn up to 7.75% interest p.a. with #{offer.offer_name}\n✔️Easy WhatsApp Banking Services.\n✔️Get Discounts on Food, Cab and Bills.\n\nApply now: ", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRllt133YN3tniF_D3kOCexKFhuyY9RKLAlAQ&s", statusTitle: "Success", statusSubtitle: "Lead is successfully verified.",
               }
             end
             user.leads.processing.each do |lead|
               offer = Offer.find_by(id: lead.offer_id)
               processingLeads << {
-                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}",
+                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, shareUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}", content: "Your #{offer.offer_name} is ready in minutes!\n✔️Get Account Number of Your Choice.\n✔️Up to 6.75% Rate of Interest on Savings Account\n.✔️Earn up to 7.75% interest p.a. with #{offer.offer_name}\n✔️Easy WhatsApp Banking Services.\n✔️Get Discounts on Food, Cab and Bills.\n\nApply now: ", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRllt133YN3tniF_D3kOCexKFhuyY9RKLAlAQ&s", statusTitle: "In Progress", statusSubtitle: "Lead is successfully added and will be updated within 7 days.",
               }
             end
             user.leads.rejected.each do |lead|
               offer = Offer.find_by(id: lead.offer_id)
               rejectedLeads << {
-                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, actionUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}",
+                offerName: offer.offer_name, offerImage: offer.banner_big_img_url, mobileNumber: lead.mobile_number, joiningDate: lead.created_at.strftime("%d/%m/%y"), lastUpdate: lead.updated_at.strftime("%d/%m/%y"), nextUpdate: (lead.updated_at + 7.days).strftime("%d/%m/%y"), payout: offer.offer_amount, shareUrl: "https://bankboss.app/leads?t=#{user.refer_code}&o=#{offer.id}", content: "Your #{offer.offer_name} is ready in minutes!\n✔️Get Account Number of Your Choice.\n✔️Up to 6.75% Rate of Interest on Savings Account\n.✔️Earn up to 7.75% interest p.a. with #{offer.offer_name}\n✔️Easy WhatsApp Banking Services.\n✔️Get Discounts on Food, Cab and Bills.\n\nApply now: ", image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRllt133YN3tniF_D3kOCexKFhuyY9RKLAlAQ&s", statusTitle: "Rejected", statusSubtitle: "Your lead is rejected.",
               }
             end
             { status: 200, message: MSG_SUCCESS, totalLeadsCount: user.leads.count, successLeadsCount: user.leads.success.count, progressLeadsCount: user.leads.processing.count, rejectedLeadsCount: user.leads.rejected.count, successLeads: successLeads || [], processingLeads: processingLeads || [], rejectedLeads: rejectedLeads || [] }
