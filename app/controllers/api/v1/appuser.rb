@@ -13,6 +13,7 @@ module API
             user = valid_user(params[:userId], params[:securityToken])
             return { status: 500, message: INVALID_USER } unless user.present?
             amount = [3582, 8128, 9529, 5634, 8621, 2698, 4797, 7646, 8499]
+            percentage = [2.8, 5.4, 6, 7, 8, 9, 10, 11, 12, 7.5, 6.2, 4.6, 4, 2]
             views = [10, 12, 25, 23, 5, 18, 19, 20, 35]
             app_banners = []
             related_videos = []
@@ -29,7 +30,7 @@ module API
                 actionUrl: app_banner.action_url,
               }
             end
-            { status: 200, message: MSG_SUCCESS, walletBalance: user.wallet_balance.to_s, totalEarning: user.transaction_histories.where(status: "COMPLETED").map { |t| t.amount.to_f }.sum, saving: amount.sample.to_s, demat: amount.sample.to_s, credit: amount.sample.to_s, loans: amount.sample.to_s, appBanners: app_banners || [], relatedVideos: related_videos || [] }
+            { status: 200, message: MSG_SUCCESS, walletBalance: user.wallet_balance.to_s, totalEarning: user.transaction_histories.where(status: "COMPLETED").map { |t| t.amount.to_f }.sum, bank: amount.sample.to_s, creditCards: amount.sample.to_s, dematAcc: amount.sample.to_s, personalLoans: percentage.sample.to_s, mutualFunds: amount.sample.to_s, creditLine: percentage.sample.to_s, business: percentage.sample.to_s, homeLoan: percentage.sample.to_s, itr: percentage.sample.to_s, appBanners: app_banners || [], relatedVideos: related_videos || [] }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-home-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR }
@@ -42,27 +43,40 @@ module API
 
         params do
           use :common_params
+          requires :listCode, type: String, allow_blank: false
         end
 
         post do
           begin
             user = valid_user(params[:userId], params[:securityToken])
             return { status: 500, message: INVALID_USER } unless user.present?
+            data = []
+            offer_types = [
+              "Bank Account",
+              "Credit Card",
+              "Credit Line",
+              "Business Loan",
+              "Home Loan",
+              "Demat Account",
+              "Personal Loan",
+              "Mutual Fund",
+              "ITR",
+            ]
 
-            offer_types = {
-              "Credit Card" => :creditList,
-              "Debit Card" => :dematList,
-              "Saving Account" => :savingList,
-              "Mutual Fund" => :mutualFunds,
-            }
-
-            offer_data = offer_types.each_with_object({}) do |(type, key), hash|
-              offers = Offer.active.where(offer_type: type)
-              hash[key] = offers.map do |offer|
-                { id: offer.id, offerName: offer.offer_name, offerAmt: offer.offer_amount, description: offer.description, imgUrl: offer.icon_small_img_url }
-              end
+            if params[:listCode].to_i.between?(0, offer_types.length - 1)
+              offers = Offer.active.where(offer_type: offer_types[params[:listCode].to_i])
             end
-            { status: 200, message: MSG_SUCCESS }.merge(offer_data)
+
+            offers.each do |offer|
+              data << {
+                id: offer.id,
+                offerName: offer.offer_name,
+                offerAmt: offer.offer_amount,
+                imgUrl: offer.icon_small_img_url,
+                description: offer.description,
+              }
+            end
+            { status: 200, message: MSG_SUCCESS, data: data || [] }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-offerList-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR }
@@ -154,7 +168,7 @@ module API
             return { status: 500, message: INVALID_USER } unless user.present?
             offer = Offer.active.find_by(id: params[:offerId])
             return { status: 500, message: "Offer Not Found" } unless offer.present?
-            { status: 200, message: MSG_SUCCESS, actionType: "redirect", actionUrl: "https://bankboss.app/leads?t=refer&o=offer" }
+            { status: 200, message: MSG_SUCCESS, actionType: "redirect", shareUrl: "Your #{offer.offer_name} is ready in minutes!\n✔️Get Account Number of Your Choice.\n✔️Up to 6.75% Rate of Interest on Savings Account\n.✔️Earn up to 7.75% interest p.a. with #{offer.offer_name}\n✔️Easy WhatsApp Banking Services.\n✔️Get Discounts on Food, Cab and Bills.\n\nApply now: https://bankboss.app/leads?t=refer&o=offer", image: offer.icon_small_img_url }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-offerClicked-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR, error: e }

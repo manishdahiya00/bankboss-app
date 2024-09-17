@@ -16,7 +16,7 @@
           </div>
           <div class="form-group">
             <%= form.label :offer_type %>
-            <%= form.select :offer_type,options_for_select(["Credit Card","Debit Card","Mutual Fund","Saving Account"], @offer.offer_type), {}, class: 'form-control' %>
+            <%= form.select :offer_type,options_for_select(["Bank Account","Credit Card","Credit Line","Business Loan","Home Loan","Demat Account","Personal Loan","Mutual Fund","ITR"], @offer.offer_type), {}, class: 'form-control' %>
           </div>
           <div class="form-group">
             <%= form.label :offer_rate %>
