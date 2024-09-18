@@ -30,7 +30,7 @@ module API
                 actionUrl: app_banner.action_url,
               }
             end
-            { status: 200, message: MSG_SUCCESS, walletBalance: user.wallet_balance.to_s, totalEarning: user.transaction_histories.where(status: "COMPLETED").map { |t| t.amount.to_f }.sum, bank: amount.sample.to_s, creditCards: amount.sample.to_s, dematAcc: amount.sample.to_s, personalLoans: percentage.sample.to_s, mutualFunds: amount.sample.to_s, creditLine: percentage.sample.to_s, business: percentage.sample.to_s, homeLoan: percentage.sample.to_s, itr: percentage.sample.to_s, appBanners: app_banners || [], relatedVideos: related_videos || [] }
+            { status: 200, message: MSG_SUCCESS, walletBalance: user.wallet_balance.to_s, totalEarning: user.transaction_histories.where(status: "COMPLETED").map { |t| t.amount.to_f }.sum, bank: amount.sample.to_s, creditCards: amount.sample.to_s, dematAcc: amount.sample.to_s, personalLoans: percentage.sample.to_s, mutualFunds: amount.sample.to_s, creditLine: percentage.sample.to_s, business: percentage.sample.to_s, homeLoan: percentage.sample.to_s, itr: amount.sample.to_s, appBanners: app_banners || [], relatedVideos: related_videos || [] }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-home-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR }
