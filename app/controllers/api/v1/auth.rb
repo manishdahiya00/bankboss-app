@@ -3,44 +3,44 @@ module API
     class Auth < Grape::API
       include API::V1::Defaults
 
-      helpers do
-        def google_validator(token, socialemail)
-          validator = GoogleIDToken::Validator.new(expiry: 300)
-          begin
-            token_segments = token.split(".")
-            if token_segments.count == 3
-              required_audience = JWT.decode(token, nil, false)[0]["aud"]
-              payload = validator.check(token, required_audience)
-              if (payload["email"] == socialemail)
-                return true
-              else
-                return false
-              end
-            else
-              return false
-            end
-          rescue GoogleIDToken::ValidationError => e
-            return false
-          end
-        end
-      end
+      # helpers do
+      #   def google_validator(token, socialemail)
+      #     validator = GoogleIDToken::Validator.new(expiry: 300)
+      #     begin
+      #       token_segments = token.split(".")
+      #       if token_segments.count == 3
+      #         required_audience = JWT.decode(token, nil, false)[0]["aud"]
+      #         payload = validator.check(token, required_audience)
+      #         if (payload["email"] == socialemail)
+      #           return true
+      #         else
+      #           return false
+      #         end
+      #       else
+      #         return false
+      #       end
+      #     rescue GoogleIDToken::ValidationError => e
+      #       return false
+      #     end
+      #   end
+      # end
 
       resource :userSignup do
         before { api_params }
 
         params do
-          requires :deviceId, type: String, allow_blank: false
+          optional :deviceId, type: String, allow_blank: false
           optional :deviceType, type: String, allow_blank: true
-          requires :deviceName, type: String, allow_blank: false
-          requires :socialType, type: String, allow_blank: false
-          requires :socialId, type: String, allow_blank: false
-          requires :socialToken, type: String, allow_blank: false
-          requires :socialEmail, type: String, allow_blank: false
-          requires :socialName, type: String, allow_blank: false
-          requires :socialImgurl, type: String, allow_blank: false
-          requires :advertisingId, type: String, allow_blank: false
-          requires :versionName, type: String, allow_blank: false
-          requires :versionCode, type: String, allow_blank: false
+          optional :deviceName, type: String, allow_blank: false
+          optional :socialType, type: String, allow_blank: true
+          optional :socialId, type: String, allow_blank: true
+          optional :socialToken, type: String, allow_blank: true
+          optional :socialEmail, type: String, allow_blank: true
+          optional :socialName, type: String, allow_blank: false
+          optional :socialImgurl, type: String, allow_blank: true
+          optional :advertisingId, type: String, allow_blank: false
+          optional :versionName, type: String, allow_blank: false
+          optional :versionCode, type: String, allow_blank: false
           optional :utmSource, type: String, allow_blank: true
           optional :utmMedium, type: String, allow_blank: true
           optional :utmTerm, type: String, allow_blank: true
@@ -48,22 +48,25 @@ module API
           optional :utmCampaign, type: String, allow_blank: true
           optional :referalUrl, type: String, allow_blank: true
           optional :fcmToken, type: String, allow_blank: true
+          optional :phone, type: String, allow_blank: true
+          optional :gender, type: String, allow_blank: true
+          optional :address, type: String, allow_blank: true
         end
         post do
           begin
-            valid_user = google_validator(params[:socialToken], params[:socialEmail])
-            if valid_user
-              user = User.find_by(social_email: params[:socialEmail], social_id: params[:socialId])
-              unless user.present?
-                source_ip = request.ip
-                user = User.create(device_id: params[:deviceId], device_type: params[:deviceType], device_name: params[:deviceName], social_type: params[:socialType], social_id: params[:socialId], social_email: params[:socialEmail], social_name: params[:socialName], social_img_url: params[:socialImgurl], advertising_id: params[:advertisingId], version_name: params[:versionName], version_code: params[:versionCode], utm_source: params[:utmSource], utm_term: params[:utmTerm], utm_medium: params[:utmMedium], utm_content: params[:utmContent], utm_campaign: params[:utmCampaign], referrer_url: params[:referalUrl], fcm_token: params[:fcmToken], source_ip: source_ip, security_token: SecureRandom.uuid, refer_code: SecureRandom.hex(6).upcase)
-                { status: 200, message: MSG_SUCCESS, userId: user.id, securityToken: user.security_token }
-              end
-              user.update(device_id: params[:deviceId], device_type: params[:deviceType], device_name: params[:deviceName], social_type: params[:socialType], social_id: params[:socialId], social_email: params[:socialEmail], social_name: params[:socialName], social_img_url: params[:socialImgurl], advertising_id: params[:advertisingId], version_name: params[:versionName], version_code: params[:versionCode], utm_source: params[:utmSource], utm_term: params[:utmTerm], utm_medium: params[:utmMedium], utm_content: params[:utmContent], utm_campaign: params[:utmCampaign], referrer_url: params[:referalUrl], fcm_token: params[:fcmToken], source_ip: source_ip)
+            # valid_user = google_validator(params[:socialToken], params[:socialEmail])
+            # if valid_user
+            user = User.find_by(social_email: params[:socialEmail], social_id: params[:socialId])
+            unless user.present?
+              source_ip = request.ip
+              user = User.create(device_id: params[:deviceId], device_type: params[:deviceType], device_name: params[:deviceName], social_type: params[:socialType], social_id: params[:socialId], social_email: params[:socialEmail], social_name: params[:socialName], social_img_url: params[:socialImgurl], advertising_id: params[:advertisingId], version_name: params[:versionName], version_code: params[:versionCode], utm_source: params[:utmSource], utm_term: params[:utmTerm], utm_medium: params[:utmMedium], utm_content: params[:utmContent], utm_campaign: params[:utmCampaign], referrer_url: params[:referalUrl], fcm_token: params[:fcmToken], source_ip: source_ip, security_token: SecureRandom.uuid, refer_code: SecureRandom.hex(6).upcase, mobile_number: params[:phone], gender: params[:gender], address: params[:address])
               { status: 200, message: MSG_SUCCESS, userId: user.id, securityToken: user.security_token }
-            else
-              { status: 500, message: "Sorry, Tricks are not allowed" }
             end
+            user.update(device_id: params[:deviceId], device_type: params[:deviceType], device_name: params[:deviceName], social_type: params[:socialType], social_id: params[:socialId], social_email: params[:socialEmail], social_name: params[:socialName], social_img_url: params[:socialImgurl], advertising_id: params[:advertisingId], version_name: params[:versionName], version_code: params[:versionCode], utm_source: params[:utmSource], utm_term: params[:utmTerm], utm_medium: params[:utmMedium], utm_content: params[:utmContent], utm_campaign: params[:utmCampaign], referrer_url: params[:referalUrl], fcm_token: params[:fcmToken], source_ip: source_ip, mobile_number: params[:phone], gender: params[:gender], address: params[:address])
+            { status: 200, message: MSG_SUCCESS, userId: user.id, securityToken: user.security_token }
+            # else
+            #   { status: 500, message: "Sorry, Tricks are not allowed" }
+            # end
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-userSignUp-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR }
@@ -115,7 +118,7 @@ module API
             source_ip = request.ip
             forceUpdate = false
             user.app_opens.create(source_ip: source_ip, version_name: params[:versionName], version_code: params[:versionCode])
-            { status: 200, message: MSG_SUCCESS, appUrl: "", currency: "₹", forceUpdate: forceUpdate, userName: user.social_name, userEmail: user.social_email, userImg: user.social_img_url, refer_code: user.refer_code }
+            { status: 200, message: MSG_SUCCESS, appUrl: "", currency: "₹", forceUpdate: forceUpdate, userName: user.social_name, userEmail: user.social_email, userImg: user.social_img_url, refer_code: user.refer_code, mobileNumber: user.mobile_number }
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-appOpen-#{params.inspect}-Error-#{e}"
             { status: 500, message: MSG_ERROR }
