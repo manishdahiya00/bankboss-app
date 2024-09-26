@@ -56,7 +56,8 @@ module API
           begin
             # valid_user = google_validator(params[:socialToken], params[:socialEmail])
             # if valid_user
-            user = User.find_by(social_email: params[:socialEmail], social_id: params[:socialId])
+            user = User.find_by("social_email = ? OR mobile_number = ?", params[:socialEmail], params[:mobileNumber])
+
             unless user.present?
               source_ip = request.ip
               user = User.create(device_id: params[:deviceId], device_type: params[:deviceType], device_name: params[:deviceName], social_type: params[:socialType], social_id: params[:socialId], social_email: params[:socialEmail], social_name: params[:socialName], social_img_url: params[:socialImgurl], advertising_id: params[:advertisingId], version_name: params[:versionName], version_code: params[:versionCode], utm_source: params[:utmSource], utm_term: params[:utmTerm], utm_medium: params[:utmMedium], utm_content: params[:utmContent], utm_campaign: params[:utmCampaign], referrer_url: params[:referalUrl], fcm_token: params[:fcmToken], source_ip: source_ip, security_token: SecureRandom.uuid, refer_code: SecureRandom.hex(6).upcase, mobile_number: params[:phone], gender: params[:gender], address: params[:address])

@@ -230,6 +230,7 @@ module API
           requires :phone, type: String, allow_blank: true
           requires :pincode, type: String, allow_blank: true
           requires :gender, type: String, allow_blank: true
+          requires :email, type: String, allow_blank: true
         end
 
         post do
@@ -238,14 +239,15 @@ module API
             return { status: 500, message: INVALID_USER } unless user.present?
             isVerified = KycDetail.find_by(user_id: user.id).present?
             if params[:method] == "GET"
-              { status: 200, message: MSG_SUCCESS, userName: user.social_name, userEmail: user.social_email, verifyStatus: isVerified ? "VERIFIED" : "NOT VERIFIED", walletBalance: user.wallet_balance, userImage: user.social_img_url, phone: user.mobile_number, pincode: user.pincode, gender: user.gender }
+              { status: 200, message: MSG_SUCCESS, userName: user.social_name, userEmail: user.social_email, verifyStatus: isVerified ? "VERIFIED" : "NOT VERIFIED", walletBalance: user.wallet_balance, userImage: user.social_img_url || "", phone: user.mobile_number || "", pincode: user.pincode || "", gender: user.gender || "" }
             else
               name = params[:name].presence || user.social_name
               phone = params[:phone].presence || user.mobile_number
               pincode = params[:pincode].presence || user.pincode
               gender = params[:gender].presence || user.gender
-              user.update(social_name: name, mobile_number: phone, pincode: pincode, gender: gender)
-              { status: 200, message: MSG_SUCCESS, userName: user.social_name, userEmail: user.social_email, verifyStatus: isVerified ? "VERIFIED" : "NOT VERIFIED", walletBalance: user.wallet_balance, userImage: user.social_img_url, phone: user.mobile_number, pincode: user.pincode, gender: user.gender }
+              email = params[:emal].presence || user.social_email
+              user.update(social_name: name, mobile_number: phone, pincode: pincode, gender: gender, social_email: email)
+              { status: 200, message: MSG_SUCCESS, userName: user.social_name, userEmail: user.social_email, verifyStatus: isVerified ? "VERIFIED" : "NOT VERIFIED", walletBalance: user.wallet_balance, userImage: user.social_img_url || "", phone: user.mobile_number || "", pincode: user.pincode || "", gender: user.gender || "" }
             end
           rescue Exception => e
             Rails.logger.info "API Exception-#{Time.now}-profile-#{params.inspect}-Error-#{e}"
